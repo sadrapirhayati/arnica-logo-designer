@@ -1,6 +1,9 @@
 # Arnica Logo Generator
 
-A small, browser-only SVG logo editor. Open `index.html` locally or publish the repository with GitHub Pages; no build tools or server are required.
+A small, browser-only SVG logo editor. Open `index.html` locally; no build tools or server are required.
+
+- **Live app:** https://sadrapirhayati.github.io/arnica-logo-designer/
+- **Source repository:** https://github.com/sadrapirhayati/arnica-logo-designer
 
 ## Features
 
@@ -11,10 +14,7 @@ A small, browser-only SVG logo editor. Open `index.html` locally or publish the 
 
 ## Publish with GitHub Pages
 
-1. Create a public GitHub repository and upload the files in this project folder to its root.
-2. Open **Settings → Pages**.
-3. Under **Build and deployment**, select **Deploy from a branch**, choose the `main` branch and `/ (root)`, then save.
-4. Open the published link shown on the Pages settings screen.
+The public repository is configured to deploy from the `main` branch root. To publish updates, commit the updated `index.html` and `arnica-logo-generator.js` files to that branch. GitHub Pages will deploy the new version automatically.
 
 ## Run locally
 
