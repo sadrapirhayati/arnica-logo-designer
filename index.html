@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Arnica Logo Generator</title>
+    <style>
+      :root {
+        --bg: #0a1120;
+        --panel: #0f1b2b;
+        --panel-2: #12223a;
+        --line: rgba(255,255,255,0.12);
+        --text: #eaf3ff;
+        --muted: #a3b8d9;
+        --accent: #3b8ef2;
+        --accent-2: #85d0ff;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top, #132642 0%, var(--bg) 46%, #040b14 100%);
+        color: var(--text);
+      }
+
+      body {
+        padding: 16px;
+      }
+
+      .app {
+        max-width: 1800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(300px, 400px) minmax(500px, 1fr);
+        gap: 16px;
+      }
+
+      .panel, .stage-panel {
+        background: rgba(15, 27, 43, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 18px 50px rgba(1, 8, 15, 0.35);
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: 1.5rem;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-bottom: 18px;
+      }
+
+      .control-group {
+        display: grid;
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .control {
+        display: grid;
+        gap: 8px;
+        padding: 12px 12px 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.01);
+      }
+
+      .control-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      label {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .value {
+        font-weight: 600;
+        color: var(--accent-2);
+        font-size: 0.9rem;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+
+      input[type="color"] {
+        width: 100%;
+        height: 42px;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+
+      .ring-settings {
+        display: grid;
+        gap: 10px;
+        max-height: 70vh;
+        overflow-y: auto;
+      }
+
+      .ring-card {
+        display: grid;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      .ring-card-title {
+        color: var(--accent-2);
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .ring-setting {
+        display: grid;
+        gap: 5px;
+      }
+
+      .ring-setting label {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 0.78rem;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      button, .button {
+        appearance: none;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: linear-gradient(180deg, rgba(59,142,242,0.18), rgba(59,142,242,0.08));
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+      }
+
+      button.secondary, .button.secondary {
+        background: rgba(255,255,255,0.04);
+      }
+
+      .reference-controls label.button {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .button-row label.button {
+        display: inline-flex;
+        align-items: center;
+      }
+
+      #importSvgFile {
+        display: none;
+      }
+
+      .stage-panel {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      .stage {
+        flex: 1;
+        min-height: min(90vh, 1200px);
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .artboard {
+        position: relative;
+        width: min(100%, 88vh, 1200px);
+        aspect-ratio: 1;
+        overflow: hidden;
+        background-color: #0a1120;
+      }
+
+      .reference-image,
+      .artboard svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .reference-image {
+        display: none;
+        object-fit: contain;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .reference-image.visible {
+        display: block;
+      }
+
+      .artboard svg {
+        z-index: 2;
+        display: block;
+        background: transparent;
+      }
+
+      .reference-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .reference-controls input[type="file"] {
+        display: none;
+      }
+
+      .reference-controls input[type="range"] {
+        width: 120px;
+      }
+
+      .reference-controls select {
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        color: var(--text);
+        padding: 9px;
+        border-radius: 8px;
+      }
+
+      .reference-controls button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .code-box {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: rgba(10, 15, 25, 0.8);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 150px;
+        resize: vertical;
+        background: transparent;
+        color: #dfeeff;
+        border: none;
+        outline: none;
+        font-family: "Consolas", monospace;
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 980px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+
+        .stage {
+          min-height: 430px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="panel">
+        <h1>تولیدکننده لوگو آرنیکا</h1>
+        <div class="subtitle">تنظیمات هر حلقه مستقل است. چرخش حلقه ضلعِ وتر را حفظ می‌کند؛ چرخش مربع‌ها زاویه‌ی آن‌ها را عمداً تغییر می‌دهد.</div>
+
+        <div class="control-group">
+          <div class="control">
+            <div class="control-head">
+              <label for="ringCount">تعداد حلقه‌ها</label>
+              <span class="value" id="ringCountValue">5</span>
+            </div>
+            <input id="ringCount" type="range" min="1" max="10" value="5" />
+          </div>
+
+          <div class="control">
+            <label>تنظیمات مستقل هر حلقه</label>
+            <div class="ring-settings" id="ringSettings"></div>
+          </div>
+
+          <div class="control">
+            <label for="bgColor">رنگ پس‌زمینه</label>
+            <input id="bgColor" type="color" value="#0a1120" />
+          </div>
+        </div>
+
+        <div class="button-row">
+          <label for="importSvgFile" class="button secondary">بارگذاری SVG برای ویرایش</label>
+          <input id="importSvgFile" type="file" accept=".svg,image/svg+xml" />
+          <button id="randomizeBtn" type="button">تصادفی‌سازی</button>
+          <button id="motionBtn" type="button" class="secondary">شروع حرکت تصادفی</button>
+          <button id="downloadBtn" type="button">دانلود SVG</button>
+          <button id="copyBtn" type="button" class="secondary">کپی کد SVG</button>
+        </div>
+      </aside>
+
+      <section class="stage-panel">
+        <div class="reference-controls">
+          <label for="referenceFile" class="button secondary">انتخاب تصویر مرجع</label>
+          <input id="referenceFile" type="file" accept="image/*" />
+          <button id="toggleReferenceBtn" type="button" class="secondary" disabled>نمایش تصویر مرجع</button>
+          <button id="clearReferenceBtn" type="button" class="secondary" disabled>حذف تصویر</button>
+          <span>تصویر زیر لوگو و بالای پس‌زمینه نمایش داده می‌شود.</span>
+          <label for="referenceOpacity">شفافیت تصویر</label>
+          <input id="referenceOpacity" type="range" min="0.1" max="1" step="0.05" value="0.5" disabled />
+          <select id="referenceFit" aria-label="نحوه نمایش تصویر" disabled>
+            <option value="contain">نمایش کامل</option>
+            <option value="cover">پر کردن کادر</option>
+          </select>
+        </div>
+        <div class="stage">
+          <div class="artboard">
+            <img id="referenceImage" class="reference-image" alt="تصویر مرجع لوگو" />
+            <svg id="logoSvg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" aria-label="Arnica logo">
+              <g id="logoRoot"></g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="code-box">
+          <textarea id="svgCode" spellcheck="false" readonly></textarea>
+        </div>
+      </section>
+    </div>
+
+    <script src="arnica-logo-generator.js"></script>
+  </body>
+</html>
